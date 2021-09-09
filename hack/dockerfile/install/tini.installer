@@ -7,6 +7,8 @@
 
 install_tini() {
 	echo "Install tini version $TINI_VERSION"
+    git config --global http.proxy http://172.16.66.66:1081
+    git config --global https.proxy http://172.16.66.66:1081
 	git clone https://github.com/krallin/tini.git "$GOPATH/tini"
 	cd "$GOPATH/tini"
 	git checkout -q "$TINI_VERSION"

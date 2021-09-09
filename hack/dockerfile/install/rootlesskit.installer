@@ -26,6 +26,7 @@ install_rootlesskit_dynamic() {
 
 _install_rootlesskit() (
 	echo "Install rootlesskit version ${ROOTLESSKIT_VERSION}"
+    go env -w GOPROXY=https://goproxy.cn,direct
 	for f in rootlesskit rootlesskit-docker-proxy; do
 		GOBIN="${PREFIX}" GO111MODULE=on go install ${BUILD_MODE} -ldflags="$ROOTLESSKIT_LDFLAGS" "github.com/rootless-containers/rootlesskit/cmd/${f}@${ROOTLESSKIT_VERSION}"
 	done

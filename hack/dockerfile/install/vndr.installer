@@ -4,5 +4,6 @@
 
 install_vndr() {
 	echo "Install vndr version $VNDR_VERSION"
+    go env -w GOPROXY=https://goproxy.cn,direct
 	GOBIN="${PREFIX}" GO111MODULE=on go install "github.com/LK4D4/vndr@${VNDR_VERSION}"
 }

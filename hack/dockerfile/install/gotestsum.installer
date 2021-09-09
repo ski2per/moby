@@ -4,6 +4,7 @@
 
 install_gotestsum() (
 	set -e
+    go env -w GOPROXY=https://goproxy.cn,direct
 	echo "Install gotestsum version ${GOTESTSUM_VERSION}"
 	GOBIN="${PREFIX}" GO111MODULE=on go install "gotest.tools/gotestsum@${GOTESTSUM_VERSION}"
 )

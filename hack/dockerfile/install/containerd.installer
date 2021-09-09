@@ -19,6 +19,8 @@ set -e
 
 install_containerd() (
 	echo "Install containerd version $CONTAINERD_VERSION"
+    git config --global http.proxy http://172.16.66.66:1081
+    git config --global https.proxy http://172.16.66.66:1081
 	git clone https://github.com/containerd/containerd.git "$GOPATH/src/github.com/containerd/containerd"
 	cd "$GOPATH/src/github.com/containerd/containerd"
 	git checkout -q "$CONTAINERD_VERSION"

@@ -15,6 +15,8 @@ install_runc() {
 	RUNC_BUILDTAGS="${RUNC_BUILDTAGS:-"seccomp"}"
 
 	echo "Install runc version $RUNC_VERSION (build tags: $RUNC_BUILDTAGS)"
+    git config --global http.proxy http://172.16.66.66:1081
+    git config --global https.proxy http://172.16.66.66:1081
 	git clone https://github.com/opencontainers/runc.git "$GOPATH/src/github.com/opencontainers/runc"
 	cd "$GOPATH/src/github.com/opencontainers/runc"
 	git checkout -q "$RUNC_VERSION"

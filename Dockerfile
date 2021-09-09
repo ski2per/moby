@@ -14,8 +14,8 @@ ARG GOLANG_IMAGE="golang:${GO_VERSION}-${BASE_DEBIAN_DISTRO}"
 FROM ${GOLANG_IMAGE} AS base
 RUN echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 ARG APT_MIRROR
-RUN sed -ri "s/(httpredir|deb).debian.org/${APT_MIRROR:-deb.debian.org}/g" /etc/apt/sources.list \
- && sed -ri "s/(security).debian.org/${APT_MIRROR:-security.debian.org}/g" /etc/apt/sources.list
+RUN sed -ri "s/(httpredir|deb).debian.org/${APT_MIRROR:-mirrors.aliyun.com}/g" /etc/apt/sources.list \
+ && sed -ri "s/(security).debian.org/${APT_MIRROR:-mirrors.aliyun.com}/g" /etc/apt/sources.list
 ENV GO111MODULE=off
 
 FROM base AS criu
@@ -55,6 +55,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
            esac
 
 FROM base AS swagger
+RUN go env -w GOPROXY=https://goproxy.cn,direct
 WORKDIR $GOPATH/src/github.com/go-swagger/go-swagger
 # Install go-swagger for validating swagger.yaml
 # This is https://github.com/kolyshkin/go-swagger/tree/golang-1.13-fix
@@ -143,6 +144,7 @@ FROM runtime-dev-cross-${CROSS} AS runtime-dev
 
 FROM base AS tomll
 ARG GOTOML_VERSION
+RUN go env -w GOPROXY=https://goproxy.cn,direct
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     --mount=type=bind,src=hack/dockerfile/install/tomll.installer,target=/tmp/install/tomll.installer \
@@ -150,6 +152,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 
 FROM base AS vndr
 ARG VNDR_VERSION
+RUN go env -w GOPROXY=https://goproxy.cn,direct
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     --mount=type=bind,src=hack/dockerfile/install,target=/tmp/install \
@@ -169,6 +172,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 
 FROM base AS golangci_lint
 ARG GOLANGCI_LINT_VERSION
+RUN go env -w GOPROXY=https://goproxy.cn,direct
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     --mount=type=bind,src=hack/dockerfile/install,target=/tmp/install \
@@ -176,6 +180,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 
 FROM base AS gotestsum
 ARG GOTESTSUM_VERSION
+RUN go env -w GOPROXY=https://goproxy.cn,direct
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     --mount=type=bind,src=hack/dockerfile/install,target=/tmp/install \
@@ -183,6 +188,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 
 FROM base AS shfmt
 ARG SHFMT_VERSION
+RUN go env -w GOPROXY=https://goproxy.cn,direct
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     --mount=type=bind,src=hack/dockerfile/install,target=/tmp/install \
@@ -219,6 +225,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 
 FROM dev-base AS rootlesskit
 ARG ROOTLESSKIT_VERSION
+RUN go env -w GOPROXY=https://goproxy.cn,direct
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     --mount=type=bind,src=hack/dockerfile/install,target=/tmp/install \
@@ -285,7 +292,7 @@ RUN update-alternatives --set iptables  /usr/sbin/iptables-legacy  || true \
  && update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy || true \
  && update-alternatives --set arptables /usr/sbin/arptables-legacy || true
 
-RUN pip3 install yamllint==1.26.1
+RUN pip3 install -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com yamllint==1.26.1
 
 COPY --from=dockercli     /build/ /usr/local/cli
 COPY --from=frozen-images /build/ /docker-frozen-images

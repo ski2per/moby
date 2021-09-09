@@ -4,5 +4,6 @@
 
 install_tomll() {
 	echo "Install go-toml version ${GOTOML_VERSION}"
+    go env -w GOPROXY=https://goproxy.cn,direct
 	GOBIN="${PREFIX}" GO111MODULE=on go install "github.com/pelletier/go-toml/cmd/tomll@${GOTOML_VERSION}"
 }
